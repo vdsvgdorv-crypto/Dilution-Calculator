@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -156,21 +155,20 @@
         ratioText === '' ||
         !Number.isFinite(total) ||
         !Number.isFinite(ratio) ||
-        total < 0 ||
+        total <= 0 ||
         ratio < 1
       ) {
         antibodyOutput.textContent = '—';
         diluentOutput.textContent = '—';
-        error.textContent = 'Enter a total of 0 or more and a ratio of 1 or more.';
+        error.textContent = 'Enter a total greater than 0 and a ratio of at least 1.';
         return;
       }
 
-      const totalInMicrolitres = Math.round(
-        total * conversions[unitInput.value]
-      );
+      const totalInMicrolitres = total * conversions[unitInput.value];
 
+      // A 1:N dilution means 1 part antibody in N parts total.
       const antibody = Math.round(totalInMicrolitres / ratio);
-      const diluent = totalInMicrolitres - antibody;
+      const diluent = Math.round(totalInMicrolitres) - antibody;
 
       antibodyOutput.textContent = format(antibody);
       diluentOutput.textContent = format(diluent);
