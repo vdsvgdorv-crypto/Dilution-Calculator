@@ -119,26 +119,18 @@
     }
   </style>
 </head>
-
 <body>
   <main>
     <div class="field">
       <label for="total">Total amount</label>
       <div class="amount-row">
-        <input
-          id="total"
-          type="number"
-          min="0"
-          step="any"
-          value="10000"
-          inputmode="decimal"
-        >
-        <select id="unit" aria-label="Unit">
+        <input id="total" type="number" min="0" step="any" value="10000" inputmode="decimal">
+        <select id="unit" aria-label="Starting amount unit">
           <option value="µL">µL</option>
           <option value="mL">mL</option>
           <option value="nL">nL</option>
           <option value="pL">pL</option>
-          <option value="">Units</option>
+          <option value="Units">Units</option>
         </select>
       </div>
     </div>
@@ -146,20 +138,9 @@
     <div class="field">
       <label for="ratio">Dilution ratio</label>
       <div class="ratio-row">
-        <input
-          aria-label="First ratio number"
-          value="1"
-          disabled
-        >
+        <input aria-label="First ratio number" value="1" disabled>
         <span class="colon">:</span>
-        <input
-          id="ratio"
-          type="number"
-          min="1"
-          step="any"
-          value="400"
-          inputmode="decimal"
-        >
+        <input id="ratio" type="number" min="1" step="any" value="400" inputmode="decimal">
       </div>
     </div>
 
@@ -167,13 +148,12 @@
       <div class="result">
         <div class="result-label">Antibody</div>
         <div class="value" id="antibody">25</div>
-        <div class="unit" id="antibodyUnit">µL</div>
+        <div class="unit">µL</div>
       </div>
-
       <div class="result">
         <div class="result-label">Diluent</div>
         <div class="value" id="diluent">9,975</div>
-        <div class="unit" id="diluentUnit">µL</div>
+        <div class="unit">µL</div>
       </div>
     </section>
 
@@ -186,8 +166,6 @@
     const unitInput = document.getElementById('unit');
     const antibodyOutput = document.getElementById('antibody');
     const diluentOutput = document.getElementById('diluent');
-    const antibodyUnit = document.getElementById('antibodyUnit');
-    const diluentUnit = document.getElementById('diluentUnit');
     const error = document.getElementById('error');
 
     function format(value) {
@@ -202,10 +180,15 @@
       const ratioText = ratioInput.value.trim();
       const total = Number(totalText);
       const ratio = Number(ratioText);
-      const unit = unitInput.value || 'Units';
+      const unit = unitInput.value;
 
-      antibodyUnit.textContent = unit;
-      diluentUnit.textContent = unit;
+      const conversions = {
+        'µL': 1,
+        'mL': 1000,
+        'nL': 0.001,
+        'pL': 0.000001,
+        'Units': 1
+      };
 
       if (
         totalText === '' ||
@@ -217,13 +200,13 @@
       ) {
         antibodyOutput.textContent = '—';
         diluentOutput.textContent = '—';
-        error.textContent =
-          'Enter a total of 0 or more and a ratio of 1 or more.';
+        error.textContent = 'Enter a total of 0 or more and a ratio of 1 or more.';
         return;
       }
 
-      const antibody = total / ratio;
-      const diluent = total - antibody;
+      const totalInMicrolitres = total * conversions[unit];
+      const antibody = totalInMicrolitres / ratio;
+      const diluent = totalInMicrolitres - antibody;
 
       antibodyOutput.textContent = format(antibody);
       diluentOutput.textContent = format(diluent);
