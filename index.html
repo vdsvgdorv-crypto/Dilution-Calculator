@@ -166,7 +166,6 @@
 
       const totalInMicrolitres = total * conversions[unitInput.value];
 
-      // A 1:N dilution means 1 part antibody in N parts total.
       const antibody = Math.round(totalInMicrolitres / ratio);
       const diluent = Math.round(totalInMicrolitres) - antibody;
 
