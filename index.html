@@ -142,10 +142,7 @@
     };
 
     function format(value) {
-      return value.toLocaleString(undefined, {
-        maximumFractionDigits: 8,
-        useGrouping: true
-      });
+      return Math.round(value).toLocaleString();
     }
 
     function calculate() {
@@ -168,8 +165,11 @@
         return;
       }
 
-      const totalInMicrolitres = total * conversions[unitInput.value];
-      const antibody = totalInMicrolitres / ratio;
+      const totalInMicrolitres = Math.round(
+        total * conversions[unitInput.value]
+      );
+
+      const antibody = Math.round(totalInMicrolitres / ratio);
       const diluent = totalInMicrolitres - antibody;
 
       antibodyOutput.textContent = format(antibody);
